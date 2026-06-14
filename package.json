@@ -1,0 +1,63 @@
+{
+  "name": "@withwiz/ui",
+  "version": "0.1.0",
+  "description": "Framework UI components for withwiz projects (React)",
+  "type": "module",
+  "files": ["dist"],
+  "exports": {
+    "./react/components/ui/*": "./dist/react/components/ui/*.js",
+    "./react/components/ui/data-table": "./dist/react/components/ui/data-table/index.js",
+    "./react/components/ui/data-table/*": "./dist/react/components/ui/data-table/*.js",
+    "./react/components/ui/data-table/DataTable": "./dist/react/components/ui/data-table/DataTable.js",
+    "./react/components/ui/data-table/DataTableBody": "./dist/react/components/ui/data-table/DataTableBody.js",
+    "./react/components/ui/data-table/DataTableBulkActions": "./dist/react/components/ui/data-table/DataTableBulkActions.js",
+    "./react/components/ui/data-table/DataTableFilters": "./dist/react/components/ui/data-table/DataTableFilters.js",
+    "./react/components/ui/data-table/DataTablePagination": "./dist/react/components/ui/data-table/DataTablePagination.js",
+    "./react/components/ui/data-table/DataTableSearch": "./dist/react/components/ui/data-table/DataTableSearch.js",
+    "./react/components/ui/data-table/types": "./dist/react/components/ui/data-table/types.js",
+    "./react/error": "./dist/react/error/index.js",
+    "./react/error/error-display": "./dist/react/error/error-display.js",
+    "./react/hooks/useDataTable": "./dist/react/hooks/useDataTable.js",
+    "./react/hooks/useDebounce": "./dist/react/hooks/useDebounce.js",
+    "./react/hooks/useExitIntent": "./dist/react/hooks/useExitIntent.js",
+    "./react/hooks/useTimezone": "./dist/react/hooks/useTimezone.js",
+    "./react/utils/client-utils": "./dist/react/utils/client-utils.js",
+    "./react/utils/qr-code": "./dist/react/utils/qr-code.js"
+  },
+  "scripts": {
+    "build": "tsup && tsc --emitDeclarationOnly --skipLibCheck",
+    "build:js": "tsup",
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
+    "prepublishOnly": "rm -rf dist && npm run build && npm test",
+    "test": "vitest run -c vitest.config.ts",
+    "test:watch": "vitest -c vitest.config.ts"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "next": ">=15"
+  },
+  "peerDependenciesMeta": {
+    "next": { "optional": true }
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.3.1",
+    "lucide-react": "^0.562.0",
+    "@radix-ui/react-select": "^2.2.6"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/jest-dom": "^6.6.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "jsdom": "^25.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  },
+  "keywords": ["ui", "react", "datatable", "withwiz"],
+  "license": "MIT"
+}
