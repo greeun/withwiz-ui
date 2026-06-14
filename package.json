@@ -35,7 +35,8 @@
   "peerDependencies": {
     "react": ">=18",
     "react-dom": ">=18",
-    "next": ">=15"
+    "next": ">=15",
+    "@withwiz/toolkit": ">=0.8.0"
   },
   "peerDependenciesMeta": {
     "next": { "optional": true }
@@ -44,11 +45,13 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.3.1",
     "lucide-react": "^0.562.0",
-    "@radix-ui/react-select": "^2.2.6"
+    "@radix-ui/react-select": "^2.2.6",
+    "sonner": "^2.0.5"
   },
   "devDependencies": {
     "@testing-library/react": "^16.0.0",
     "@testing-library/jest-dom": "^6.6.0",
+    "@types/node": "^20",
     "@types/react": "^18.3.0",
     "@types/react-dom": "^18.3.0",
     "jsdom": "^25.0.0",
@@ -56,7 +59,8 @@
     "react-dom": "^19.0.0",
     "tsup": "^8.4.0",
     "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "vitest": "^3.0.0",
+    "@withwiz/toolkit": "file:../withwiz-toolkit"
   },
   "keywords": ["ui", "react", "datatable", "withwiz"],
   "license": "MIT"
