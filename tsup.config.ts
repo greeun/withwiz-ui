@@ -9,6 +9,13 @@ export default defineConfig({
   splitting: true,
   clean: true,
   outDir: "dist",
+  esbuildOptions(options) {
+    // Preserve the `react/` path segment in the output (dist/react/...),
+    // matching the package.json `exports` targets. Without an explicit
+    // outbase, tsup collapses the common entry dir (src/react) and emits
+    // dist/components/... instead of dist/react/components/...
+    options.outbase = "src";
+  },
   external: [
     "react",
     "react-dom",
@@ -17,5 +24,7 @@ export default defineConfig({
     "tailwind-merge",
     "lucide-react",
     "@radix-ui/react-select",
+    "@withwiz/toolkit",
+    "sonner",
   ],
 });
