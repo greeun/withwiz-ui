@@ -63,7 +63,7 @@
     "tsup": "^8.4.0",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0",
-    "@withwiz/toolkit": "file:../withwiz-toolkit"
+    "@withwiz/toolkit": "^0.8.0"
   },
   "keywords": ["ui", "react", "datatable", "withwiz"],
   "license": "MIT"
