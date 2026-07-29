@@ -103,8 +103,22 @@ import {
 } from '@withwiz/ui/react/components/ui/Pagination';
 ```
 - `PaginationLink` — `href?`, `onClick?`, `isActive?`, `className`, `children`
-- `PaginationPrevious` / `PaginationNext` — `href?`, `onClick?`, `className`, `children` (기본 라벨 "Previous"/"Next", 셰브론 아이콘 포함)
+- `PaginationPrevious` / `PaginationNext` — `href?`, `onClick?`, `className`, `children`, `aria-disabled?`, `tabIndex?` (기본 라벨 "Previous"/"Next", 셰브론 아이콘 포함)
 - `PaginationEllipsis` — `className`
+
+> **접근성**: 첫/마지막 페이지에서 이전·다음을 비활성 처리할 때는 `aria-disabled`와
+> `tabIndex={-1}`을 함께 지정한다. `opacity`와 `pointer-events-none`만 주면 시각적으로만
+> 비활성이고, 화면낭독기에는 여전히 클릭 가능한 링크로 안내되며 키보드로는 도달해도
+> 아무 동작이 없다. 또한 흐려진 글자가 활성 요소로 취급돼 명도 대비 기준(WCAG AA)에
+> 걸린다(비활성으로 표시된 요소는 대비 기준에서 면제된다).
+>
+> ```tsx
+> <PaginationPrevious
+>   aria-disabled={page <= 1}
+>   tabIndex={page <= 1 ? -1 : undefined}
+>   className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+> />
+> ```
 
 ### LoadingBar
 ```tsx
@@ -157,6 +171,10 @@ re-export.
 
 **특징:** 필터링, 정렬, 페이지네이션, 벌크 액션, 행 선택, 클라이언트/서버 필터 모드,
 선택적 URL 동기화, i18n 라벨, 로딩/에러/빈 상태 처리.
+
+**접근성:** 열 헤더는 `<th scope="col">`로 렌더된다. `scope`가 없으면 화면낭독기가
+헤더와 데이터 셀을 연결하지 못한다(WCAG 1.3.1). 페이지네이션의 이전·다음 버튼은
+첫/마지막 페이지에서 `aria-disabled`와 `tabIndex={-1}`이 적용된다.
 
 ```tsx
 import { DataTable } from '@withwiz/ui/react/components/ui/data-table';
