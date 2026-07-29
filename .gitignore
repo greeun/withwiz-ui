@@ -2,4 +2,7 @@ node_modules
 dist
 coverage
 .DS_Store
+
+# superpowers (auto-installed; do not track)
+.superpowers/
 docs/superpowers/
