@@ -104,8 +104,23 @@ import {
 } from '@withwiz/ui/react/components/ui/Pagination';
 ```
 - `PaginationLink` — `href?`, `onClick?`, `isActive?`, `className`, `children`
-- `PaginationPrevious` / `PaginationNext` — `href?`, `onClick?`, `className`, `children` (default labels "Previous"/"Next", with chevron icons)
+- `PaginationPrevious` / `PaginationNext` — `href?`, `onClick?`, `className`, `children`, `aria-disabled?`, `tabIndex?` (default labels "Previous"/"Next", with chevron icons)
 - `PaginationEllipsis` — `className`
+
+> **Accessibility**: when disabling previous/next on the first/last page, set
+> `aria-disabled` and `tabIndex={-1}` as well. Styling alone (`opacity` +
+> `pointer-events-none`) only *looks* disabled — screen readers still announce a
+> clickable link, and keyboard users can reach a control that does nothing. The dimmed
+> text is also treated as an active element and fails the WCAG AA contrast requirement
+> (elements marked disabled are exempt).
+>
+> ```tsx
+> <PaginationPrevious
+>   aria-disabled={page <= 1}
+>   tabIndex={page <= 1 ? -1 : undefined}
+>   className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+> />
+> ```
 
 ### LoadingBar
 ```tsx
@@ -158,6 +173,10 @@ A general-purpose, server-driven data table. Re-exported from
 
 **Features:** filtering, sorting, pagination, bulk actions, row selection,
 client/server filter modes, optional URL sync, i18n labels, loading/error/empty states.
+
+**Accessibility:** column headers render as `<th scope="col">` — without `scope`, screen
+readers cannot associate headers with data cells (WCAG 1.3.1). Pagination previous/next
+receive `aria-disabled` and `tabIndex={-1}` on the first/last page.
 
 ```tsx
 import { DataTable } from '@withwiz/ui/react/components/ui/data-table';
