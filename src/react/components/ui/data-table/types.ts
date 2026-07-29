@@ -13,6 +13,8 @@ export interface DataTableLabels {
   clearFilters?: string;
   selectAll?: string;
   selectAllShort?: string;
+  /** 행 선택 체크박스의 접근 가능한 이름 접두어 (예: "Select" → "Select {id}") */
+  selectRow?: string;
   selected?: string;           // "{count} / {total} selected" 형식
   processing?: string;
   processingItems?: string;    // "Processing {count} items..."
@@ -34,6 +36,7 @@ export const DEFAULT_LABELS: Required<DataTableLabels> = {
   clearFilters: "Clear Filters",
   selectAll: "Select All",
   selectAllShort: "All",
+  selectRow: "Select row",
   selected: "{count} / {total} selected",
   processing: "Processing...",
   processingItems: "Processing {count} items...",
