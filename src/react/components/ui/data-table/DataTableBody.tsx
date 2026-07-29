@@ -58,7 +58,7 @@ export function DataTableBody<T>({
           <thead>
             <tr className="border-b bg-muted/50">
               {selectable && (
-                <th className="px-3 py-2 text-center font-medium w-12">
+                <th scope="col" className="px-3 py-2 text-center font-medium w-12">
                   <div className="flex items-center justify-center">
                     <input
                       data-testid="select-all-checkbox"
@@ -74,7 +74,9 @@ export function DataTableBody<T>({
               {visibleColumns.map(column => {
                 const width = column.width === 'auto' ? undefined : column.width;
                 return (
+                  // scope="col" — 없으면 화면낭독기가 헤더와 데이터 셀을 연결하지 못한다(WCAG 1.3.1)
                   <th
+                    scope="col"
                     key={column.key}
                     className={cn(
                       "px-2 py-2 font-medium first:pl-4 last:pr-4",
