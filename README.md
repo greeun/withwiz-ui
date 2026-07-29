@@ -59,3 +59,49 @@ component behavior are identical.
 
 Consumers pinned to an older `@withwiz/toolkit` (which still bundles `react/*`) are
 unaffected until they choose to migrate.
+
+## Development
+
+**This repository uses pnpm.** It is pinned via the `packageManager` field, so Corepack
+will reject other package managers. Do not run `npm install` here — it produces a
+`package-lock.json` and a hoisted `node_modules` that no longer catches undeclared
+dependencies.
+
+```bash
+pnpm install
+pnpm run build     # tsup + tsc (declarations)
+pnpm test          # vitest
+```
+
+### Why pnpm here
+
+pnpm keeps `node_modules` strictly isolated: only declared dependencies are visible at
+the top level (15 entries here, versus ~200 under npm's hoisting). That matters for a
+library — importing a package that is *not* declared in `package.json` still works
+locally under npm, but breaks in every consuming project. pnpm fails fast instead.
+
+### Build scripts
+
+Dependency install scripts are blocked by default from pnpm 10 (supply-chain defense).
+Packages that legitimately need them are listed in `pnpm-workspace.yaml`:
+
+```yaml
+allowBuilds:
+  esbuild: true   # tsup downloads a platform-specific native binary in postinstall
+  sharp: true     # native image module
+```
+
+Leaving an entry unset (the scaffolded `set this to true or false` placeholder) makes
+the config inert: every install prints `ERR_PNPM_IGNORED_BUILDS` and skips the script.
+
+### Publishing
+
+`prepublishOnly` runs a clean build and the full test suite, so publish with:
+
+```bash
+pnpm publish
+```
+
+Sibling packages differ — `@withwiz/toolkit` and `@withwiz/cms-kit` use npm
+(`package-lock.json`). Check the tracked lockfile before running anything in another
+package.
