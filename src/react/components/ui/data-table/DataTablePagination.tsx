@@ -47,8 +47,18 @@ export function DataTablePagination({
 
           {/* Previous Button */}
           <PaginationItem>
+            {/*
+              첫 페이지에서는 실제로 비활성 상태임을 보조기술에도 알린다.
+              aria-disabled 없이 opacity-50 + pointer-events-none 만 주면
+              시각적으로만 비활성이고 화면낭독기에는 여전히 "클릭 가능한 링크"로
+              안내되며, 키보드로는 도달해도 아무 동작이 없다.
+              또한 흐려진 글자(대비 3.69:1)가 활성 요소로 취급돼 WCAG AA 위반이 된다.
+              (비활성 요소는 대비 기준에서 면제되므로 표시만 하면 해소된다.)
+            */}
             <PaginationPrevious
               href="#"
+              aria-disabled={pagination.page <= 1}
+              tabIndex={pagination.page <= 1 ? -1 : undefined}
               onClick={e => {
                 e.preventDefault();
                 if (pagination.page > 1) pagination.onPageChange(pagination.page - 1);
@@ -137,8 +147,11 @@ export function DataTablePagination({
 
           {/* Next Button */}
           <PaginationItem>
+            {/* 마지막 페이지 비활성 표시 — 위 PaginationPrevious와 동일한 이유 */}
             <PaginationNext
               href="#"
+              aria-disabled={pagination.page >= totalPages}
+              tabIndex={pagination.page >= totalPages ? -1 : undefined}
               onClick={e => {
                 e.preventDefault();
                 if (pagination.page < totalPages) pagination.onPageChange(pagination.page + 1);
