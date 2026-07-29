@@ -25,6 +25,10 @@ export interface DataTableBodyProps<T> {
   onSort: (columnKey: string) => void;
   labels: {
     loading: string;
+    /** 전체 선택 체크박스의 접근 가능한 이름 */
+    selectAll: string;
+    /** 행 선택 체크박스 이름 접두어 */
+    selectRow: string;
   };
 }
 
@@ -63,6 +67,7 @@ export function DataTableBody<T>({
                     <input
                       data-testid="select-all-checkbox"
                       type="checkbox"
+                      aria-label={labels.selectAll}
                       ref={selectAllRef}
                       checked={data.length > 0 && localSelectedIds.length === data.length}
                       onChange={e => onSelectAll(e.target.checked)}
@@ -152,6 +157,7 @@ export function DataTableBody<T>({
                         <input
                           data-testid={`row-checkbox-${rowId}`}
                           type="checkbox"
+                          aria-label={`${labels.selectRow} ${rowId}`}
                           checked={localSelectedIds.includes(rowId)}
                           onChange={e => onSelect(rowId, e.target.checked)}
                           className="h-4 w-4"
