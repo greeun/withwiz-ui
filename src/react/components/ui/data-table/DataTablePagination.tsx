@@ -76,12 +76,16 @@ export function DataTablePagination({
             목록 구조가 깨져 낭독기가 항목 수를 잘못 안내한다(axe: list/listitem).
             반응형 숨김만 필요하므로 <li>에 클래스를 준다.
           */}
-          <li className="hidden sm:flex">
-            {(() => {
+          {/*
+            페이지 번호는 감싸는 요소 없이 <ul>의 직계 <li>로 둔다.
+            <div>로 감싸면 list 위반, <li>로 감싸면 <li> 안에 <li>가 되어 listitem 위반이다.
+            반응형 숨김은 각 PaginationItem에 클래스로 준다.
+          */}
+          {(() => {
               const pages = [];
               if (pagination.page > 3) {
                 pages.push(
-                  <PaginationItem key={1}>
+                  <PaginationItem key={1} className="hidden sm:flex">
                     <PaginationLink
                       href="#"
                       onClick={e => {
@@ -95,7 +99,7 @@ export function DataTablePagination({
                 );
                 if (pagination.page > 4) {
                   pages.push(
-                    <PaginationItem key="ellipsis1">
+                    <PaginationItem key="ellipsis1" className="hidden sm:flex">
                       <PaginationEllipsis />
                     </PaginationItem>
                   );
@@ -103,7 +107,7 @@ export function DataTablePagination({
               }
               for (let i = Math.max(1, pagination.page - 2); i <= Math.min(totalPages, pagination.page + 2); i++) {
                 pages.push(
-                  <PaginationItem key={i}>
+                  <PaginationItem key={i} className="hidden sm:flex">
                     <PaginationLink
                       href="#"
                       isActive={i === pagination.page}
@@ -120,13 +124,13 @@ export function DataTablePagination({
               if (pagination.page < totalPages - 2) {
                 if (pagination.page < totalPages - 3) {
                   pages.push(
-                    <PaginationItem key="ellipsis2">
+                    <PaginationItem key="ellipsis2" className="hidden sm:flex">
                       <PaginationEllipsis />
                     </PaginationItem>
                   );
                 }
                 pages.push(
-                  <PaginationItem key={totalPages}>
+                  <PaginationItem key={totalPages} className="hidden sm:flex">
                     <PaginationLink
                       href="#"
                       onClick={e => {
@@ -141,7 +145,6 @@ export function DataTablePagination({
               }
               return pages;
             })()}
-          </li>
 
           {/* Current Page - Mobile only */}
           <div className="sm:hidden">
