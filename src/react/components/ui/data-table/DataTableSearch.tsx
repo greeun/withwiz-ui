@@ -109,6 +109,8 @@ export function DataTableSearch({
           {pagination && (
             <select
               data-testid="page-size-select"
+              /* 연결된 <label>이 없어 낭독기가 용도를 알 수 없다 — 이름을 직접 부여 */
+              aria-label={formatLabel(labels.perPage, { size: pagination.pageSize })}
               value={pagination.pageSize}
               onChange={e => pagination.onPageSizeChange(Number(e.target.value))}
               className="border rounded px-3 py-2 text-sm bg-background h-10 min-w-[100px]"

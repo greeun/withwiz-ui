@@ -71,7 +71,12 @@ export function DataTablePagination({
           </PaginationItem>
 
           {/* Page Numbers - Hidden on mobile */}
-          <div className="hidden sm:flex">
+          {/*
+            <ul>(PaginationContent)의 직계 자식은 <li>여야 한다. 여기에 <div>를 두면
+            목록 구조가 깨져 낭독기가 항목 수를 잘못 안내한다(axe: list/listitem).
+            반응형 숨김만 필요하므로 <li>에 클래스를 준다.
+          */}
+          <li className="hidden sm:flex">
             {(() => {
               const pages = [];
               if (pagination.page > 3) {
@@ -136,7 +141,7 @@ export function DataTablePagination({
               }
               return pages;
             })()}
-          </div>
+          </li>
 
           {/* Current Page - Mobile only */}
           <div className="sm:hidden">
