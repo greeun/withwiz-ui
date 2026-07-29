@@ -1,3 +1,12 @@
+# pnpm 설치 시 의존성의 빌드 스크립트(postinstall 등) 실행 허용 여부.
+#
+# pnpm 10부터 설치 스크립트는 기본 차단된다(공급망 공격 방어). 허용 여부를
+# 명시하지 않으면 설치할 때마다 ERR_PNPM_IGNORED_BUILDS 로 건너뛰고,
+# pnpm이 이 파일에 미결정 항목을 다시 써 넣는다.
+#
+# - esbuild : 번들러 tsup이 사용. postinstall에서 플랫폼별 네이티브 바이너리를
+#             내려받으므로 차단되면 빌드가 실패한다.
+# - sharp   : 이미지 처리 네이티브 모듈. 동일한 이유로 허용한다.
 allowBuilds:
-  esbuild: set this to true or false
-  sharp: set this to true or false
+  esbuild: true
+  sharp: true
