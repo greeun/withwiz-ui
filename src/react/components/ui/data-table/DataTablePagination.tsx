@@ -36,14 +36,14 @@ export function DataTablePagination({
     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-muted/50 rounded-lg">
       <Pagination className="w-full">
         <PaginationContent className="flex-wrap gap-1 justify-between w-full items-center">
-          {/* Results Info */}
-          <div className="text-sm text-muted-foreground text-center sm:text-left whitespace-nowrap">
+          {/* Results Info — <ul>의 직계 자식이므로 <li>여야 한다(axe: list/listitem) */}
+          <li className="text-sm text-muted-foreground text-center sm:text-left whitespace-nowrap">
             {formatLabel(labels.showing, {
               start: ((pagination.page - 1) * pagination.pageSize) + 1,
               end: Math.min(pagination.page * pagination.pageSize, pagination.total),
               total: pagination.total
             })}
-          </div>
+          </li>
 
           {/* Previous Button */}
           <PaginationItem>
