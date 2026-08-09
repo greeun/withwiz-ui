@@ -211,7 +211,7 @@ const columns: ColumnDef<User>[] = [
 | `columns` | `ColumnDef<T>[]` | required |
 | `getRowId` | `(item: T) => string` | required |
 | `loading` / `error` | `boolean` / `string \| null` | state UI |
-| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. The page-size select renders inside the search bar when there is one, otherwise in its own toolbar above the table. `getPageHref` gives page links real `href`s so middle-click / open-in-new-tab work; modifier-clicks are left to the browser |
+| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. The page-size select renders inside the search bar when there is one, otherwise in its own toolbar above the table. `getPageHref` gives page links real `href`s so middle-click / open-in-new-tab work; modifier-clicks are left to the browser. `align` (`'start' \| 'center' \| 'end'`, default `'end'`) places the page controls — the results label stays on the left in every mode, and `'center'` means true center relative to the table width |
 | `sort` | `SortConfig` | `sort`, `order`, `onSortChange` |
 | `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | filter wiring | the table **renders filter inputs but never filters data** — filtering belongs to the caller (server query, or shaping the array before passing it). Total count and sorting are decided outside the table, so silently dropping rows would contradict them. The filter toggle lives inside the search panel, so `filters` alone (without `onSearch` or `createButton`) cannot be opened |
 | `bulkActions` | `BulkAction[]` | shown when `selectable` |
