@@ -173,8 +173,10 @@ re-export.
 선택적 URL 동기화, i18n 라벨, 로딩/에러/빈 상태 처리.
 
 **접근성:** 열 헤더는 `<th scope="col">`로 렌더된다. `scope`가 없으면 화면낭독기가
-헤더와 데이터 셀을 연결하지 못한다(WCAG 1.3.1). 페이지네이션의 이전·다음 버튼은
-첫/마지막 페이지에서 `aria-disabled`와 `tabIndex={-1}`이 적용된다.
+헤더와 데이터 셀을 연결하지 못한다(WCAG 1.3.1). 정렬 가능한 헤더는 조작부를 `th` 안의
+실제 `<button>`으로 두고 `th`에 `aria-sort`를 노출한다 — `th` 자체는 키보드 포커스를
+받지 못하므로 클릭 핸들러만 달면 키보드로 정렬할 수 없다(WCAG 2.1.1). 페이지네이션의
+이전·다음 버튼은 첫/마지막 페이지에서 `aria-disabled`와 `tabIndex={-1}`이 적용된다.
 
 ```tsx
 import { DataTable } from '@withwiz/ui/react/components/ui/data-table';
@@ -207,7 +209,7 @@ const columns: ColumnDef<User>[] = [
 | `columns` | `ColumnDef<T>[]` | 필수 |
 | `getRowId` | `(item: T) => string` | 필수 |
 | `loading` / `error` | `boolean` / `string \| null` | 상태 UI |
-| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange` |
+| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. 페이지 크기 선택기는 검색 바가 있으면 그 안에, 없으면 표 위 단독 툴바에 렌더된다. `getPageHref`를 주면 페이지 링크가 실제 주소를 갖는다 — 가운데 클릭·새 탭 열기가 살아나고, 보조 클릭은 브라우저 기본 동작에 맡긴다 |
 | `sort` | `SortConfig` | `sort`, `order`, `onSortChange` |
 | `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | 필터 연동 | 각 `FilterConfig` 는 `filterMode: 'server' \| 'client'` + `filterFn` 지원 |
 | `bulkActions` | `BulkAction[]` | `selectable` 일 때 노출 |
@@ -216,17 +218,27 @@ const columns: ColumnDef<User>[] = [
 | `showFilters` / `onToggleFilters` | 필터 패널 토글 | |
 | `createButton` | `ReactNode \| { label, onClick }` | |
 | `labels` | `Partial<DataTableLabels>` | i18n; 기본값 영어 (`DEFAULT_LABELS`) |
-| `syncWithUrl` | `boolean` (기본 `false`) | 검색/정렬/페이지네이션을 URL 쿼리 파라미터에 반영 |
+| `syncWithUrl` | `boolean` (기본 `false`) | 검색/정렬/페이지네이션을 `history.replaceState`로 URL에 반영한다. **서버 재질의를 유발하지 않으므로** 데이터가 서버 렌더링이면 별도의 라우터 이동과 함께 써야 한다 |
 | `emptyMessage` | `string` (기본 `"No data"`) | |
+| `emptyContent` | `ReactNode` | 지정 시 `emptyMessage` 대신 이 노드를 렌더 |
+| `footer` | `ReactNode` | `<tfoot>`에 렌더 — 정렬·페이징 대상이 아닌 합계 행용. `<tr>/<td>`를 직접 작성하고 컬럼 수는 호출부가 맞춘다 |
+| `rowClassName` | `(item: T, index: number) => string \| undefined` | 행별 클래스 — 변경 행 강조, 비활성 행 표시 |
+| `classNames` | `DataTableClassNames` | 부위별 클래스 슬롯: `wrapper`, `scroller`, `table`, `headerRow`, `headerCell`, `row`, `cell`, `footer`, `pagination`, `toolbar`. `tailwind-merge`로 병합되므로 `wrapper: "border-0 rounded-none"`으로 카드 테두리를 없애고 `table: "min-w-[1400px]"`로 컬럼 압축 대신 가로 스크롤을 강제할 수 있다 |
 
 ### 보조 타입
-`ColumnDef<T>` (`key`, `header`, `accessorKey?`, `cell?`, `sortable?`, `width?`,
-`minWidth?`, `maxWidth?`, `className?`, `hidden?`, `responsive?`), `BulkAction`,
-`FilterConfig`, `PaginationConfig`, `SortConfig`, `DataTableLabels`. 추가 export:
-`DEFAULT_LABELS`, `formatLabel(template, values)`.
+`ColumnDef<T>` (`key`, `header: ReactNode`, `headerTitle?`, `accessorKey?`, `cell?`,
+`sortable?`, `width?`, `minWidth?`, `maxWidth?`, `className?`, `hidden?`, `responsive?`),
+`BulkAction`, `FilterConfig`, `PaginationConfig`, `SortConfig`, `DataTableLabels`,
+`DataTableClassNames`. 추가 export: `DEFAULT_LABELS`, `formatLabel(template, values)`.
+
+`headerTitle`은 `th`의 `title` 속성이다 — "파생 값", "내부 전용" 같은 컬럼 주석에 쓴다.
+`header`를 노드로 넣어도 주석은 따로 전달해야 한다.
 
 하위 컴포넌트(커스텀 레이아웃용): `DataTableSearch`, `DataTableFilters`,
-`DataTableBulkActions`, `DataTableBody`, `DataTablePagination`.
+`DataTableBulkActions`, `DataTableBody`, `DataTablePagination`, `DataTablePageSize`.
+
+필터 패널은 `React.lazy`로 불러온다 — 필터를 열지 않는 화면에는
+`@radix-ui/react-select`가 실리지 않는다.
 
 상태 관리는 [`useDataTable`](../hooks/README.ko.md#usedatatable) 훅과 함께 사용.
 

@@ -10,7 +10,7 @@ import { Button } from "@withwiz/ui/react/components/ui/Button";
 import { Input } from "@withwiz/ui/react/components/ui/Input";
 import { Filter } from 'lucide-react';
 import type { PaginationConfig, FilterConfig } from "@withwiz/ui/react/components/ui/data-table/types";
-import { formatLabel } from "@withwiz/ui/react/components/ui/data-table/types";
+import { DataTablePageSize } from "@withwiz/ui/react/components/ui/data-table/DataTablePageSize";
 
 export interface DataTableSearchProps {
   onSearch?: (search: string) => void;
@@ -75,7 +75,8 @@ export function DataTableSearch({
               placeholder={searchPlaceholder}
               value={searchValue}
               onChange={e => handleSearchInputChange(e.target.value)}
-              onKeyPress={handleSearch}
+              /* onKeyPress 는 React 19 에서 폐기 — keydown 으로 대체 */
+              onKeyDown={handleSearch}
               className="min-w-0 pr-20 h-10"
             />
             <Button
@@ -106,20 +107,7 @@ export function DataTableSearch({
               )}
             </Button>
           )}
-          {pagination && (
-            <select
-              data-testid="page-size-select"
-              /* 연결된 <label>이 없어 낭독기가 용도를 알 수 없다 — 이름을 직접 부여 */
-              aria-label={formatLabel(labels.perPage, { size: pagination.pageSize })}
-              value={pagination.pageSize}
-              onChange={e => pagination.onPageSizeChange(Number(e.target.value))}
-              className="border rounded px-3 py-2 text-sm bg-background h-10 min-w-[100px]"
-            >
-              {(pagination.pageSizeOptions || [10, 20, 50]).map(size => (
-                <option key={size} value={size}>{formatLabel(labels.perPage, { size })}</option>
-              ))}
-            </select>
-          )}
+          {pagination && <DataTablePageSize pagination={pagination} labels={labels} />}
           {createButton && (
             isValidElement(createButton) ? createButton : (
               <Button

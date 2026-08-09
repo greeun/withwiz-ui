@@ -175,8 +175,10 @@ A general-purpose, server-driven data table. Re-exported from
 client/server filter modes, optional URL sync, i18n labels, loading/error/empty states.
 
 **Accessibility:** column headers render as `<th scope="col">` — without `scope`, screen
-readers cannot associate headers with data cells (WCAG 1.3.1). Pagination previous/next
-receive `aria-disabled` and `tabIndex={-1}` on the first/last page.
+readers cannot associate headers with data cells (WCAG 1.3.1). Sortable headers put the
+control in a real `<button>` inside the `th` and expose `aria-sort` on the `th`, so sorting
+is reachable by keyboard (WCAG 2.1.1). Pagination previous/next receive `aria-disabled`
+and `tabIndex={-1}` on the first/last page.
 
 ```tsx
 import { DataTable } from '@withwiz/ui/react/components/ui/data-table';
@@ -209,7 +211,7 @@ const columns: ColumnDef<User>[] = [
 | `columns` | `ColumnDef<T>[]` | required |
 | `getRowId` | `(item: T) => string` | required |
 | `loading` / `error` | `boolean` / `string \| null` | state UI |
-| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange` |
+| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. The page-size select renders inside the search bar when there is one, otherwise in its own toolbar above the table. `getPageHref` gives page links real `href`s so middle-click / open-in-new-tab work; modifier-clicks are left to the browser |
 | `sort` | `SortConfig` | `sort`, `order`, `onSortChange` |
 | `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | filter wiring | each `FilterConfig` supports `filterMode: 'server' \| 'client'` + `filterFn` |
 | `bulkActions` | `BulkAction[]` | shown when `selectable` |
@@ -218,17 +220,27 @@ const columns: ColumnDef<User>[] = [
 | `showFilters` / `onToggleFilters` | filter panel toggle | |
 | `createButton` | `ReactNode \| { label, onClick }` | |
 | `labels` | `Partial<DataTableLabels>` | i18n; defaults to English (`DEFAULT_LABELS`) |
-| `syncWithUrl` | `boolean` (default `false`) | mirrors search/sort/pagination to URL query params |
+| `syncWithUrl` | `boolean` (default `false`) | mirrors search/sort/pagination to URL query params via `history.replaceState` — it does **not** re-run a server query, so pair it with your own navigation when the data is server-rendered |
 | `emptyMessage` | `string` (default `"No data"`) | |
+| `emptyContent` | `ReactNode` | rendered instead of `emptyMessage` when set |
+| `footer` | `ReactNode` | rendered in `<tfoot>` — totals rows that must not be sorted or paged. Write your own `<tr>/<td>` and match the column count |
+| `rowClassName` | `(item: T, index: number) => string \| undefined` | per-row classes — changed-row highlights, disabled rows |
+| `classNames` | `DataTableClassNames` | per-part class slots: `wrapper`, `scroller`, `table`, `headerRow`, `headerCell`, `row`, `cell`, `footer`, `pagination`, `toolbar`. Merged with `tailwind-merge`, so `wrapper: "border-0 rounded-none"` removes the card frame and `table: "min-w-[1400px]"` forces horizontal scroll instead of column squeeze |
 
 ### Supporting types
-`ColumnDef<T>` (`key`, `header`, `accessorKey?`, `cell?`, `sortable?`, `width?`,
-`minWidth?`, `maxWidth?`, `className?`, `hidden?`, `responsive?`), `BulkAction`,
-`FilterConfig`, `PaginationConfig`, `SortConfig`, `DataTableLabels`. Also exported:
-`DEFAULT_LABELS` and `formatLabel(template, values)`.
+`ColumnDef<T>` (`key`, `header: ReactNode`, `headerTitle?`, `accessorKey?`, `cell?`,
+`sortable?`, `width?`, `minWidth?`, `maxWidth?`, `className?`, `hidden?`, `responsive?`),
+`BulkAction`, `FilterConfig`, `PaginationConfig`, `SortConfig`, `DataTableLabels`,
+`DataTableClassNames`. Also exported: `DEFAULT_LABELS` and `formatLabel(template, values)`.
+
+`headerTitle` sets the `th` `title` attribute — use it for column footnotes such as
+"derived value" or "internal only", which a `ReactNode` header cannot carry on its own.
 
 Sub-components (for custom layouts): `DataTableSearch`, `DataTableFilters`,
-`DataTableBulkActions`, `DataTableBody`, `DataTablePagination`.
+`DataTableBulkActions`, `DataTableBody`, `DataTablePagination`, `DataTablePageSize`.
+
+The filter panel is loaded with `React.lazy`, so `@radix-ui/react-select` only ships to
+pages that actually open filters.
 
 Pair with the [`useDataTable`](../hooks/README.md#usedatatable) hook for state management.
 
