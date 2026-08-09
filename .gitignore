@@ -6,3 +6,6 @@ coverage
 # superpowers (auto-installed; do not track)
 .superpowers/
 docs/superpowers/
+
+# 에이전트 지침 (로컬 전용; 추적하지 않음)
+CLAUDE.md
