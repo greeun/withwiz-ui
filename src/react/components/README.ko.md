@@ -209,9 +209,9 @@ const columns: ColumnDef<User>[] = [
 | `columns` | `ColumnDef<T>[]` | 필수 |
 | `getRowId` | `(item: T) => string` | 필수 |
 | `loading` / `error` | `boolean` / `string \| null` | 상태 UI |
-| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. 페이지 크기 선택기는 검색 바가 있으면 그 안에, 없으면 표 위 단독 툴바에 렌더된다. `getPageHref`를 주면 페이지 링크가 실제 주소를 갖는다 — 가운데 클릭·새 탭 열기가 살아나고, 보조 클릭은 브라우저 기본 동작에 맡긴다 |
+| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. 페이지 크기 선택기는 검색 바가 있으면 그 안에, 없으면 표 위 단독 툴바에 렌더된다. `getPageHref`를 주면 페이지 링크가 실제 주소를 갖는다 — 가운데 클릭·새 탭 열기가 살아나고, 보조 클릭은 브라우저 기본 동작에 맡긴다. `align`(`'start' \| 'center' \| 'end'`, 기본 `'end'`)으로 이동부 위치를 정한다 — 건수 안내는 어느 값에서도 왼쪽에 남고, `'center'` 는 표 폭 기준 정중앙이다 |
 | `sort` | `SortConfig` | `sort`, `order`, `onSortChange` |
-| `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | 필터 연동 | 각 `FilterConfig` 는 `filterMode: 'server' \| 'client'` + `filterFn` 지원 |
+| `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | 필터 연동 | 표는 필터 값을 **표시할 뿐 데이터를 거르지 않는다** — 거르는 일은 호출부(서버 질의 또는 전달 전 배열 가공)의 몫이다. 총 건수·정렬이 표 밖에서 정해지므로 표가 임의로 행을 빼면 어긋난다. 필터 토글 버튼은 검색 패널 안에 있어 `onSearch`(또는 `createButton`) 없이 `filters` 만 주면 열 수 없다 |
 | `bulkActions` | `BulkAction[]` | `selectable` 일 때 노출 |
 | `selectable` / `selectedIds` / `onSelectionChange` | 행 선택 | |
 | `onSearch` / `searchValue` / `onSearchValueChange` / `searchPlaceholder` | 검색 바 | `onSearch` 또는 `createButton` 있을 때만 검색 바 렌더링 |
@@ -223,7 +223,7 @@ const columns: ColumnDef<User>[] = [
 | `emptyContent` | `ReactNode` | 지정 시 `emptyMessage` 대신 이 노드를 렌더 |
 | `footer` | `ReactNode` | `<tfoot>`에 렌더 — 정렬·페이징 대상이 아닌 합계 행용. `<tr>/<td>`를 직접 작성하고 컬럼 수는 호출부가 맞춘다 |
 | `rowClassName` | `(item: T, index: number) => string \| undefined` | 행별 클래스 — 변경 행 강조, 비활성 행 표시 |
-| `classNames` | `DataTableClassNames` | 부위별 클래스 슬롯: `wrapper`, `scroller`, `table`, `headerRow`, `headerCell`, `row`, `cell`, `footer`, `pagination`, `toolbar`. `tailwind-merge`로 병합되므로 `wrapper: "border-0 rounded-none"`으로 카드 테두리를 없애고 `table: "min-w-[1400px]"`로 컬럼 압축 대신 가로 스크롤을 강제할 수 있다 |
+| `classNames` | `DataTableClassNames` | 부위별 클래스 슬롯: `wrapper`, `scroller`, `table`, `headerRow`, `headerCell`, `row`, `cell`, `footer`, `pagination`, `toolbar`, `search`, `filters`. `pagination` 에 글자 크기를 주면 건수 안내·이동 버튼이 함께 따라온다. `toolbar` 는 검색 패널이 없을 때만 렌더되는 자리라 검색을 켜면 `search` 를 쓴다. `tailwind-merge`로 병합되므로 `wrapper: "border-0 rounded-none"`으로 카드 테두리를 없애고 `table: "min-w-[1400px]"`로 컬럼 압축 대신 가로 스크롤을 강제할 수 있다 |
 
 ### 보조 타입
 `ColumnDef<T>` (`key`, `header: ReactNode`, `headerTitle?`, `accessorKey?`, `cell?`,
