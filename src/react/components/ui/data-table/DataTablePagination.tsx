@@ -39,6 +39,18 @@ export function DataTablePagination({
   // getPageHref 를 주면 실제 주소를 갖는 링크가 된다 — 새 탭·가운데 클릭이 살아나고
   // JS 미로딩 상태에서도 이동한다. 없으면 종전대로 "#" + preventDefault.
   const hrefFor = (page: number) => pagination.getPageHref?.(page) ?? "#";
+  // Pagination 프리미티브는 컨트롤에 text-sm 을 직접 붙인다. 표 밀도를 래퍼 한 곳에서
+  // 정하도록 이 안에서는 상속으로 되돌린다(프리미티브 단독 사용처의 기본값은 그대로).
+  const INHERIT_SIZE = "text-[length:inherit]";
+
+  // 이동부 위치. 'center' 는 좌우 대칭 여백이 필요해 그리드로 바꾼다 — flex 로는
+  // 안내 폭만큼 밀린 "남은 공간의 중앙"이 되어 표 폭 기준 정중앙이 아니다.
+  const ALIGN = {
+    end: { bar: "sm:flex-row sm:justify-between", nav: "" },
+    start: { bar: "sm:flex-row sm:justify-start", nav: "" },
+    center: { bar: "sm:grid sm:grid-cols-[1fr_auto_1fr]", nav: "sm:col-start-2" },
+  } as const;
+  const align = ALIGN[pagination.align ?? "end"];
   const clickFor = (page: number, guard?: () => boolean) => (e: MouseEvent<Element>) => {
     // 보조 클릭(새 탭/새 창)은 가로채지 않고 브라우저 기본 동작에 맡긴다
     if (pagination.getPageHref && (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)) return;
@@ -50,21 +62,28 @@ export function DataTablePagination({
   return (
     <div
       className={cn(
-        "flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-muted/50 rounded-lg",
+        "flex flex-col items-center gap-3 p-3 bg-muted/50 rounded-lg text-sm",
+        align.bar,
         className
       )}
     >
-      <Pagination className="w-full">
-        <PaginationContent className="flex-wrap gap-1 justify-between w-full items-center">
-          {/* Results Info — <ul>의 직계 자식이므로 <li>여야 한다(axe: list/listitem) */}
-          <li className="text-sm text-muted-foreground text-center sm:text-left whitespace-nowrap">
-            {formatLabel(labels.showing, {
-              start: ((pagination.page - 1) * pagination.pageSize) + 1,
-              end: Math.min(pagination.page * pagination.pageSize, pagination.total),
-              total: pagination.total
-            })}
-          </li>
+      {/*
+        건수 안내는 내비게이션이 아니라 현재 상태 설명이다. <nav>의 <ul> 안에 두면
+        보조기술이 페이지 이동 항목과 같은 목록 항목으로 읽고, 목록이 가로 폭을
+        나눠 가지면서 이동 버튼이 표 폭 전체로 흩어진다. 바깥 래퍼의 자식으로 두면
+        래퍼의 justify-between 이 의도대로 "안내는 왼쪽, 이동은 오른쪽"이 된다.
+      */}
+      <p className="text-muted-foreground text-center sm:text-left whitespace-nowrap">
+        {formatLabel(labels.showing, {
+          start: ((pagination.page - 1) * pagination.pageSize) + 1,
+          end: Math.min(pagination.page * pagination.pageSize, pagination.total),
+          total: pagination.total
+        })}
+      </p>
 
+      {/* 글자 크기는 래퍼에서 상속받는다 — classNames.pagination 으로 밀도를 한 번에 조절할 수 있게 */}
+      <Pagination className={cn("w-auto mx-0 text-[length:inherit]", align.nav)}>
+        <PaginationContent className="flex-wrap gap-1 items-center">
           {/* Previous Button */}
           <PaginationItem>
             {/*
@@ -80,7 +99,7 @@ export function DataTablePagination({
               aria-disabled={pagination.page <= 1}
               tabIndex={pagination.page <= 1 ? -1 : undefined}
               onClick={clickFor(pagination.page - 1, () => pagination.page > 1)}
-              className={pagination.page <= 1 ? "pointer-events-none opacity-50" : ""}
+              className={cn(INHERIT_SIZE, pagination.page <= 1 ? "pointer-events-none opacity-50" : "")}
             >
               <span className="hidden sm:inline">{labels.previous}</span>
               <span className="sm:hidden">←</span>
@@ -97,7 +116,7 @@ export function DataTablePagination({
               if (pagination.page > 3) {
                 pages.push(
                   <PaginationItem key={1} className="hidden sm:flex">
-                    <PaginationLink href={hrefFor(1)} onClick={clickFor(1)}>
+                    <PaginationLink href={hrefFor(1)} onClick={clickFor(1)} className={INHERIT_SIZE}>
                       1
                     </PaginationLink>
                   </PaginationItem>
@@ -117,6 +136,7 @@ export function DataTablePagination({
                       href={hrefFor(i)}
                       isActive={i === pagination.page}
                       onClick={clickFor(i)}
+                      className={INHERIT_SIZE}
                     >
                       {i}
                     </PaginationLink>
@@ -133,7 +153,7 @@ export function DataTablePagination({
                 }
                 pages.push(
                   <PaginationItem key={totalPages} className="hidden sm:flex">
-                    <PaginationLink href={hrefFor(totalPages)} onClick={clickFor(totalPages)}>
+                    <PaginationLink href={hrefFor(totalPages)} onClick={clickFor(totalPages)} className={INHERIT_SIZE}>
                       {totalPages}
                     </PaginationLink>
                   </PaginationItem>
@@ -144,7 +164,7 @@ export function DataTablePagination({
 
           {/* Current Page - Mobile only. <ul>의 직계 자식이므로 <li>여야 한다 */}
           <li className="sm:hidden">
-            <span className="px-3 py-2 text-sm font-medium">
+            <span className="px-3 py-2 font-medium">
               {pagination.page} / {totalPages}
             </span>
           </li>
@@ -157,7 +177,7 @@ export function DataTablePagination({
               aria-disabled={pagination.page >= totalPages}
               tabIndex={pagination.page >= totalPages ? -1 : undefined}
               onClick={clickFor(pagination.page + 1, () => pagination.page < totalPages)}
-              className={pagination.page >= totalPages ? "pointer-events-none opacity-50" : ""}
+              className={cn(INHERIT_SIZE, pagination.page >= totalPages ? "pointer-events-none opacity-50" : "")}
             >
               <span className="hidden sm:inline">{labels.next}</span>
               <span className="sm:hidden">→</span>

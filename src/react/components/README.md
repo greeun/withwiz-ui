@@ -211,9 +211,9 @@ const columns: ColumnDef<User>[] = [
 | `columns` | `ColumnDef<T>[]` | required |
 | `getRowId` | `(item: T) => string` | required |
 | `loading` / `error` | `boolean` / `string \| null` | state UI |
-| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. The page-size select renders inside the search bar when there is one, otherwise in its own toolbar above the table. `getPageHref` gives page links real `href`s so middle-click / open-in-new-tab work; modifier-clicks are left to the browser |
+| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. The page-size select renders inside the search bar when there is one, otherwise in its own toolbar above the table. `getPageHref` gives page links real `href`s so middle-click / open-in-new-tab work; modifier-clicks are left to the browser. `align` (`'start' \| 'center' \| 'end'`, default `'end'`) places the page controls — the results label stays on the left in every mode, and `'center'` means true center relative to the table width |
 | `sort` | `SortConfig` | `sort`, `order`, `onSortChange` |
-| `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | filter wiring | each `FilterConfig` supports `filterMode: 'server' \| 'client'` + `filterFn` |
+| `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | filter wiring | the table **renders filter inputs but never filters data** — filtering belongs to the caller (server query, or shaping the array before passing it). Total count and sorting are decided outside the table, so silently dropping rows would contradict them. The filter toggle lives inside the search panel, so `filters` alone (without `onSearch` or `createButton`) cannot be opened |
 | `bulkActions` | `BulkAction[]` | shown when `selectable` |
 | `selectable` / `selectedIds` / `onSelectionChange` | row selection | |
 | `onSearch` / `searchValue` / `onSearchValueChange` / `searchPlaceholder` | search bar | search bar renders only when `onSearch` or `createButton` is set |
@@ -225,7 +225,7 @@ const columns: ColumnDef<User>[] = [
 | `emptyContent` | `ReactNode` | rendered instead of `emptyMessage` when set |
 | `footer` | `ReactNode` | rendered in `<tfoot>` — totals rows that must not be sorted or paged. Write your own `<tr>/<td>` and match the column count |
 | `rowClassName` | `(item: T, index: number) => string \| undefined` | per-row classes — changed-row highlights, disabled rows |
-| `classNames` | `DataTableClassNames` | per-part class slots: `wrapper`, `scroller`, `table`, `headerRow`, `headerCell`, `row`, `cell`, `footer`, `pagination`, `toolbar`. Merged with `tailwind-merge`, so `wrapper: "border-0 rounded-none"` removes the card frame and `table: "min-w-[1400px]"` forces horizontal scroll instead of column squeeze |
+| `classNames` | `DataTableClassNames` | per-part class slots: `wrapper`, `scroller`, `table`, `headerRow`, `headerCell`, `row`, `cell`, `footer`, `pagination`, `toolbar`, `search`, `filters`. A font size on `pagination` cascades to both the results label and the page controls. `toolbar` only renders when there is no search panel — with search enabled, use `search` instead. Merged with `tailwind-merge`, so `wrapper: "border-0 rounded-none"` removes the card frame and `table: "min-w-[1400px]"` forces horizontal scroll instead of column squeeze |
 
 ### Supporting types
 `ColumnDef<T>` (`key`, `header: ReactNode`, `headerTitle?`, `accessorKey?`, `cell?`,

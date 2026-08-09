@@ -6,6 +6,7 @@
 "use client";
 
 import { ReactNode, isValidElement } from "react";
+import { cn } from "@withwiz/ui/react/utils/client-utils";
 import { Button } from "@withwiz/ui/react/components/ui/Button";
 import { Input } from "@withwiz/ui/react/components/ui/Input";
 import { Filter } from 'lucide-react';
@@ -32,6 +33,8 @@ export interface DataTableSearchProps {
     label: string;
     onClick: () => void;
   };
+  /** 검색 패널 컨테이너의 className — 기본 배경·여백을 호출부 디자인 규칙으로 덮을 때 */
+  className?: string;
 }
 
 export function DataTableSearch({
@@ -46,6 +49,7 @@ export function DataTableSearch({
   hasActiveFilters,
   pagination,
   createButton,
+  className,
 }: DataTableSearchProps) {
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && onSearch) {
@@ -66,7 +70,7 @@ export function DataTableSearch({
   };
 
   return (
-    <div className="flex flex-col gap-3 p-3 bg-muted rounded-lg">
+    <div className={cn("flex flex-col gap-3 p-3 bg-muted rounded-lg", className)}>
       <div className="flex flex-row items-center gap-2">
         {onSearch && (
           <div className="relative flex-1 min-w-0">

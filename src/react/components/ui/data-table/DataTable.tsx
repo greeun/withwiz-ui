@@ -205,6 +205,7 @@ export function DataTable<T>({
           hasActiveFilters={hasActiveFilters}
           pagination={pagination}
           createButton={createButton}
+          className={classNames?.search}
         />
       )}
 
@@ -226,6 +227,7 @@ export function DataTable<T>({
             onClearFilters={onClearFilters}
             hasActiveFilters={hasActiveFilters}
             labels={labels}
+            className={classNames?.filters}
           />
         </Suspense>
       )}
