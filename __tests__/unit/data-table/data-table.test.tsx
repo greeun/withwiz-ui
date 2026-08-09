@@ -199,6 +199,35 @@ describe("DataTable — 페이지네이션", () => {
     expect(list.className).not.toContain("w-full");
   });
 
+  it("align 기본값은 안내 왼쪽·이동부 오른쪽이다", () => {
+    renderTable({ pagination, labels: { showing: "총 {total}건 · {start}–{end}" } });
+    const bar = screen.getByText("총 25건 · 1–10").parentElement as HTMLElement;
+    expect(bar.className).toContain("sm:justify-between");
+    expect(bar.className).not.toContain("sm:grid");
+  });
+
+  it("align='center' 는 좌우 대칭 여백을 위해 그리드로 배치한다", () => {
+    renderTable({
+      pagination: { ...pagination, align: "center" },
+      labels: { showing: "총 {total}건 · {start}–{end}" },
+    });
+    const bar = screen.getByText("총 25건 · 1–10").parentElement as HTMLElement;
+    expect(bar.className).toContain("sm:grid-cols-[1fr_auto_1fr]");
+    expect(bar.className).not.toContain("sm:justify-between");
+    const nav = document.querySelector("nav") as HTMLElement;
+    expect(nav.className).toContain("sm:col-start-2");
+  });
+
+  it("align='start' 는 안내 바로 뒤에 이동부를 둔다", () => {
+    renderTable({
+      pagination: { ...pagination, align: "start" },
+      labels: { showing: "총 {total}건 · {start}–{end}" },
+    });
+    const bar = screen.getByText("총 25건 · 1–10").parentElement as HTMLElement;
+    expect(bar.className).toContain("sm:justify-start");
+    expect(bar.className).not.toContain("sm:justify-between");
+  });
+
   it("pagination 슬롯의 글자 크기가 건수 안내·이동 버튼에 함께 적용된다", () => {
     renderTable({
       pagination,

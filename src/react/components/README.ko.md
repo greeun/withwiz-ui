@@ -209,7 +209,7 @@ const columns: ColumnDef<User>[] = [
 | `columns` | `ColumnDef<T>[]` | 필수 |
 | `getRowId` | `(item: T) => string` | 필수 |
 | `loading` / `error` | `boolean` / `string \| null` | 상태 UI |
-| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. 페이지 크기 선택기는 검색 바가 있으면 그 안에, 없으면 표 위 단독 툴바에 렌더된다. `getPageHref`를 주면 페이지 링크가 실제 주소를 갖는다 — 가운데 클릭·새 탭 열기가 살아나고, 보조 클릭은 브라우저 기본 동작에 맡긴다 |
+| `pagination` | `PaginationConfig` | `page`, `pageSize`, `total`, `pageSizeOptions?`, `onPageChange`, `onPageSizeChange?`, `getPageHref?`. 페이지 크기 선택기는 검색 바가 있으면 그 안에, 없으면 표 위 단독 툴바에 렌더된다. `getPageHref`를 주면 페이지 링크가 실제 주소를 갖는다 — 가운데 클릭·새 탭 열기가 살아나고, 보조 클릭은 브라우저 기본 동작에 맡긴다. `align`(`'start' \| 'center' \| 'end'`, 기본 `'end'`)으로 이동부 위치를 정한다 — 건수 안내는 어느 값에서도 왼쪽에 남고, `'center'` 는 표 폭 기준 정중앙이다 |
 | `sort` | `SortConfig` | `sort`, `order`, `onSortChange` |
 | `filters` / `filterValues` / `onFilterChange` / `onClearFilters` | 필터 연동 | 표는 필터 값을 **표시할 뿐 데이터를 거르지 않는다** — 거르는 일은 호출부(서버 질의 또는 전달 전 배열 가공)의 몫이다. 총 건수·정렬이 표 밖에서 정해지므로 표가 임의로 행을 빼면 어긋난다. 필터 토글 버튼은 검색 패널 안에 있어 `onSearch`(또는 `createButton`) 없이 `filters` 만 주면 열 수 없다 |
 | `bulkActions` | `BulkAction[]` | `selectable` 일 때 노출 |

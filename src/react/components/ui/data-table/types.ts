@@ -130,6 +130,14 @@ export interface PaginationConfig {
    * 일반 클릭만 onPageChange 로 가로챈다.
    */
   getPageHref?: (page: number) => string;
+  /**
+   * 페이지 이동부의 가로 위치 (기본 'end'). 건수 안내는 어느 값에서도 왼쪽에 남는다.
+   *  - 'end'    안내 왼쪽 · 이동부 오른쪽 끝
+   *  - 'center' 안내 왼쪽 · 이동부는 표 폭 기준 정중앙(좌우 대칭 여백)
+   *  - 'start'  안내 바로 뒤에 이동부
+   * 좁은 화면(sm 미만)에서는 값과 무관하게 세로로 쌓인다.
+   */
+  align?: 'start' | 'center' | 'end';
 }
 
 export interface SortConfig {
