@@ -184,6 +184,35 @@ describe("DataTable — 페이지네이션", () => {
     fireEvent.click(screen.getByText("2"));
     expect(onPageChange).toHaveBeenCalledWith(2);
   });
+
+  it("건수 안내는 내비게이션 목록 밖에 둔다 (이동 항목과 같은 목록 항목으로 읽히지 않게)", () => {
+    renderTable({ pagination, labels: { showing: "총 {total}건 · {start}–{end}" } });
+    const info = screen.getByText("총 25건 · 1–10");
+    expect(info.closest("nav")).toBeNull();
+    expect(info.closest("ul")).toBeNull();
+  });
+
+  it("이동 항목 목록은 가로로 흩어지지 않는다 (justify-between 회귀 방지)", () => {
+    renderTable({ pagination });
+    const list = document.querySelector("nav ul") as HTMLElement;
+    expect(list.className).not.toContain("justify-between");
+    expect(list.className).not.toContain("w-full");
+  });
+
+  it("pagination 슬롯의 글자 크기가 건수 안내·이동 버튼에 함께 적용된다", () => {
+    renderTable({
+      pagination,
+      labels: { showing: "총 {total}건 · {start}–{end}", previous: "이전" },
+      classNames: { pagination: "text-xs" },
+    });
+    const bar = screen.getByText("총 25건 · 1–10").parentElement as HTMLElement;
+    expect(bar.className).toContain("text-xs");
+    expect(bar.className).not.toContain("text-sm");
+    // 컨트롤은 프리미티브의 text-sm 대신 바에서 상속받는다
+    const prev = screen.getByText("이전").closest("a") as HTMLElement;
+    expect(prev.className).toContain("text-[length:inherit]");
+    expect(prev.className).not.toContain("text-sm");
+  });
 });
 
 describe("DataTable — 행 강조 (rowClassName)", () => {
@@ -285,6 +314,31 @@ describe("DataTable — classNames 슬롯", () => {
     const tds = [...document.querySelectorAll("tbody td")];
     expect(tds.every((td) => td.className.includes("py-1.5"))).toBe(true);
     expect(tds.every((td) => !td.className.includes("py-3"))).toBe(true);
+  });
+
+  it("search 슬롯은 검색 패널의 배경 밴드를 덮는다", () => {
+    renderTable({
+      onSearch: vi.fn(),
+      classNames: { search: "bg-transparent p-0" },
+    });
+    const panel = screen.getByTestId("search-input").closest("div")?.parentElement
+      ?.parentElement as HTMLElement;
+    expect(panel.className).toContain("bg-transparent");
+    expect(panel.className).not.toContain("bg-muted");
+  });
+
+  // 필터 패널은 lazy 라 첫 렌더에 나오지 않는다 — 로드될 때까지 기다린다
+  it("filters 슬롯은 필터 패널의 배경 밴드를 덮는다", async () => {
+    renderTable({
+      onSearch: vi.fn(),
+      showFilters: true,
+      filters: [{ key: "status", label: "상태", type: "text" }],
+      classNames: { filters: "bg-transparent" },
+    });
+    const input = await screen.findByTestId("filter-status");
+    const panel = input.closest("div")?.parentElement?.parentElement as HTMLElement;
+    expect(panel.className).toContain("bg-transparent");
+    expect(panel.className).not.toContain("bg-muted/50");
   });
 });
 
