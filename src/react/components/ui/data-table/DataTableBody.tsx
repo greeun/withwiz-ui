@@ -1,14 +1,18 @@
 /**
  * DataTableBody
  *
- * 테이블 본체 서브 컴포넌트 (thead + tbody)
+ * 테이블 본체 서브 컴포넌트 (thead + tbody + tfoot)
  */
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, type ReactNode } from "react";
 import { cn } from "@withwiz/ui/react/utils/client-utils";
 import { LoadingBar } from "@withwiz/ui/react/components/ui/loading-bar";
-import type { ColumnDef, SortConfig } from "@withwiz/ui/react/components/ui/data-table/types";
+import type {
+  ColumnDef,
+  DataTableClassNames,
+  SortConfig,
+} from "@withwiz/ui/react/components/ui/data-table/types";
 
 export interface DataTableBodyProps<T> {
   data: T[];
@@ -16,9 +20,13 @@ export interface DataTableBodyProps<T> {
   loading: boolean;
   error: string | null;
   emptyMessage: string;
+  emptyContent?: ReactNode;
+  footer?: ReactNode;
   selectable: boolean;
   localSelectedIds: string[];
   getRowId: (item: T) => string;
+  rowClassName?: (item: T, index: number) => string | undefined;
+  classNames?: DataTableClassNames;
   onSelectAll: (checked: boolean) => void;
   onSelect: (id: string, checked: boolean) => void;
   sort?: SortConfig;
@@ -38,9 +46,13 @@ export function DataTableBody<T>({
   loading,
   error,
   emptyMessage,
+  emptyContent,
+  footer,
   selectable,
   localSelectedIds,
   getRowId,
+  rowClassName,
+  classNames,
   onSelectAll,
   onSelect,
   sort,
@@ -55,12 +67,14 @@ export function DataTableBody<T>({
     }
   }, [localSelectedIds, data.length]);
 
+  const spanAll = visibleColumns.length + (selectable ? 1 : 0);
+
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="overflow-x-auto max-w-full">
-        <table className="w-full text-sm min-w-full">
+    <div className={cn("border rounded-lg overflow-hidden", classNames?.wrapper)}>
+      <div className={cn("overflow-x-auto max-w-full", classNames?.scroller)}>
+        <table className={cn("w-full text-sm min-w-full", classNames?.table)}>
           <thead>
-            <tr className="border-b bg-muted/50">
+            <tr className={cn("border-b bg-muted/50", classNames?.headerRow)}>
               {selectable && (
                 <th scope="col" className="px-3 py-2 text-center font-medium w-12">
                   <div className="flex items-center justify-center">
@@ -78,14 +92,36 @@ export function DataTableBody<T>({
               )}
               {visibleColumns.map(column => {
                 const width = column.width === 'auto' ? undefined : column.width;
+                const active = column.sortable && sort && sort.sort === column.key;
+                const indicator = active ? (
+                  <span aria-hidden="true">{sort!.order === 'asc' ? '▲' : '▼'}</span>
+                ) : null;
+                const inner = (
+                  <span className="flex items-center justify-center gap-1">
+                    {column.header}
+                    {indicator}
+                  </span>
+                );
                 return (
                   // scope="col" — 없으면 화면낭독기가 헤더와 데이터 셀을 연결하지 못한다(WCAG 1.3.1)
+                  // aria-sort 는 정렬 가능 컬럼에만 붙인다. 정렬 조작은 th 클릭이 아니라
+                  // 내부 button 이 맡는다 — th 는 키보드 포커스를 받지 못한다(WCAG 2.1.1).
                   <th
                     scope="col"
                     key={column.key}
+                    title={column.headerTitle}
+                    aria-sort={
+                      column.sortable && sort
+                        ? active
+                          ? sort.order === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : 'none'
+                        : undefined
+                    }
                     className={cn(
                       "px-2 py-2 font-medium first:pl-4 last:pr-4",
-                      column.sortable && "cursor-pointer",
+                      classNames?.headerCell,
                       column.className,
                       column.responsive?.sm && "hidden sm:table-cell",
                       column.responsive?.md && "hidden md:table-cell",
@@ -97,14 +133,18 @@ export function DataTableBody<T>({
                       minWidth: column.minWidth || width || undefined,
                       maxWidth: column.maxWidth || undefined,
                     }}
-                    onClick={column.sortable ? () => onSort(column.key) : undefined}
                   >
-                    <div className="flex items-center justify-center gap-1">
-                      {column.header}
-                      {column.sortable && sort && sort.sort === column.key && (
-                        <span>{sort.order === 'asc' ? '▲' : '▼'}</span>
-                      )}
-                    </div>
+                    {column.sortable ? (
+                      <button
+                        type="button"
+                        onClick={() => onSort(column.key)}
+                        className="flex w-full cursor-pointer items-center justify-center gap-1 font-medium"
+                      >
+                        {inner}
+                      </button>
+                    ) : (
+                      inner
+                    )}
                   </th>
                 );
               })}
@@ -113,10 +153,7 @@ export function DataTableBody<T>({
           <tbody>
             {loading ? (
               <tr>
-                <td
-                  colSpan={visibleColumns.length + (selectable ? 1 : 0)}
-                  className="text-center py-8"
-                >
+                <td colSpan={spanAll} className="text-center py-8">
                   <div className="flex flex-col items-center space-y-3">
                     <LoadingBar size="md" variant="primary" className="w-64" />
                     <p className="text-sm text-muted-foreground">{labels.loading}</p>
@@ -125,31 +162,34 @@ export function DataTableBody<T>({
               </tr>
             ) : error ? (
               <tr>
-                <td
-                  colSpan={visibleColumns.length + (selectable ? 1 : 0)}
-                  className="text-center py-8 text-destructive"
-                >
+                <td colSpan={spanAll} className="text-center py-8 text-destructive">
                   {error}
                 </td>
               </tr>
             ) : data.length === 0 ? (
               <tr>
                 <td
-                  colSpan={visibleColumns.length + (selectable ? 1 : 0)}
-                  className="text-center py-8 text-muted-foreground"
+                  colSpan={spanAll}
+                  className={cn(
+                    "text-center text-muted-foreground",
+                    // 노드를 받으면 자체 여백을 갖는 경우가 많아 기본 패딩을 주지 않는다
+                    emptyContent ? undefined : "py-8"
+                  )}
                 >
-                  {emptyMessage}
+                  {emptyContent ?? emptyMessage}
                 </td>
               </tr>
             ) : (
-              data.map(item => {
+              data.map((item, index) => {
                 const rowId = getRowId(item);
                 return (
                   <tr
                     key={rowId}
                     className={cn(
                       "border-b last:border-0 hover:bg-muted/30",
-                      localSelectedIds.includes(rowId) && "bg-primary/5"
+                      localSelectedIds.includes(rowId) && "bg-primary/5",
+                      classNames?.row,
+                      rowClassName?.(item, index)
                     )}
                   >
                     {selectable && (
@@ -169,6 +209,7 @@ export function DataTableBody<T>({
                         key={column.key}
                         className={cn(
                           "px-2 py-3 overflow-hidden first:pl-4 last:pr-4",
+                          classNames?.cell,
                           column.className,
                           column.responsive?.sm && "hidden sm:table-cell",
                           column.responsive?.md && "hidden md:table-cell",
@@ -192,6 +233,9 @@ export function DataTableBody<T>({
               })
             )}
           </tbody>
+          {footer && !loading && !error && (
+            <tfoot className={classNames?.footer}>{footer}</tfoot>
+          )}
         </table>
       </div>
     </div>

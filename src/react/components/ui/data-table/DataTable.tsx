@@ -6,20 +6,36 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { Suspense, lazy, useState, useEffect, useMemo, useRef } from "react";
 import { Alert, AlertDescription } from "@withwiz/ui/react/components/ui/Alert";
 import { cn } from "@withwiz/ui/react/utils/client-utils";
 import { DataTableSearch } from "@withwiz/ui/react/components/ui/data-table/DataTableSearch";
-import { DataTableFilters } from "@withwiz/ui/react/components/ui/data-table/DataTableFilters";
+import { DataTablePageSize } from "@withwiz/ui/react/components/ui/data-table/DataTablePageSize";
 import { DataTableBulkActions } from "@withwiz/ui/react/components/ui/data-table/DataTableBulkActions";
 import { DataTableBody } from "@withwiz/ui/react/components/ui/data-table/DataTableBody";
 import { DataTablePagination } from "@withwiz/ui/react/components/ui/data-table/DataTablePagination";
 import { DEFAULT_LABELS } from "@withwiz/ui/react/components/ui/data-table/types";
 import type { DataTableProps, BulkAction, FilterConfig } from "@withwiz/ui/react/components/ui/data-table/types";
 
+// 필터 패널은 실제로 펼칠 때만 불러온다 — 정적 import 면 필터를 쓰지 않는 표에도
+// @radix-ui/react-select 가 따라 들어간다.
+const DataTableFilters = lazy(async () => ({
+  default: (await import("@withwiz/ui/react/components/ui/data-table/DataTableFilters")).DataTableFilters,
+}));
+
 // 안정적 기본값 (매 호출마다 새 참조 생성 방지)
 const EMPTY_ARRAY: readonly never[] = [];
 const EMPTY_OBJECT: Record<string, never> = {};
+
+/** 필터 값이 "활성"인지 판정 — 도메인 키에 의존하지 않는다 */
+function isFilterValueActive(value: unknown): boolean {
+  if (value === undefined || value === null || value === "") return false;
+  if (value === "all") return false;
+  if (value === false) return false;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "object") return Object.values(value as Record<string, unknown>).some(isFilterValueActive);
+  return true;
+}
 
 export function DataTable<T>({
   data,
@@ -38,7 +54,11 @@ export function DataTable<T>({
   selectedIds = EMPTY_ARRAY as unknown as string[],
   getRowId,
   className,
+  classNames,
+  rowClassName,
+  footer,
   emptyMessage = "No data",
+  emptyContent,
   searchPlaceholder = "Search...",
   onSearch,
   onSearchValueChange,
@@ -73,25 +93,11 @@ export function DataTable<T>({
     }
   }, [selectedIds]);
 
-  // 필터 활성 상태 확인
+  // 필터 활성 상태 확인 — 값 자체로 판정한다(0.1.x 는 특정 프로젝트의 필터 키를
+  // 하드코딩해 다른 프로젝트에서는 "활성" 배지가 뜨지 않았다)
   const hasActiveFilters = useMemo(() => {
     if (searchValue && searchValue.trim()) return true;
-
-    for (const [key, value] of Object.entries(filterValues)) {
-      if (value === undefined || value === null || value === '') continue;
-      if (value === 'all') continue;
-
-      if (typeof value === 'object' && value !== null) {
-        if (key === 'dateRange' && (value.start || value.end)) return true;
-        if (key === 'clickRange' && (value.min || value.max)) return true;
-        if (key === 'lastClickedRange' && (value.start || value.end)) return true;
-      } else {
-        if (key === 'activeFilter' && value !== 'all') return true;
-        if (key === 'publicFilter' && value !== 'all') return true;
-        if (key === 'expirationFilter' && value !== 'all') return true;
-      }
-    }
-    return false;
+    return Object.values(filterValues).some(isFilterValueActive);
   }, [searchValue, filterValues]);
 
   // URL 동기화
@@ -181,11 +187,12 @@ export function DataTable<T>({
   };
 
   const visibleColumns = columns.filter(col => !col.hidden);
+  const hasSearchPanel = Boolean(onSearch || createButton);
 
   return (
     <div className={cn("space-y-4", className)}>
       {/* Search Panel */}
-      {(onSearch || createButton) && (
+      {hasSearchPanel && (
         <DataTableSearch
           onSearch={onSearch}
           onSearchValueChange={onSearchValueChange}
@@ -201,16 +208,26 @@ export function DataTable<T>({
         />
       )}
 
+      {/* 검색바가 없는 표의 페이지 크기 선택기 — 선택기가 검색바에만 있으면
+          검색을 쓰지 않는 표에서 pageSize 를 바꿀 수 없다 */}
+      {!hasSearchPanel && pagination && pagination.total > 0 && (
+        <div className={cn("flex justify-end", classNames?.toolbar)}>
+          <DataTablePageSize pagination={pagination} labels={labels} />
+        </div>
+      )}
+
       {/* Filter Panel */}
       {showFilters && filters.length > 0 && (
-        <DataTableFilters
-          filters={filters}
-          filterValues={filterValues}
-          onFilterChange={onFilterChange}
-          onClearFilters={onClearFilters}
-          hasActiveFilters={hasActiveFilters}
-          labels={labels}
-        />
+        <Suspense fallback={null}>
+          <DataTableFilters
+            filters={filters}
+            filterValues={filterValues}
+            onFilterChange={onFilterChange}
+            onClearFilters={onClearFilters}
+            hasActiveFilters={hasActiveFilters}
+            labels={labels}
+          />
+        </Suspense>
       )}
 
       {/* Bulk Actions Bar */}
@@ -240,9 +257,13 @@ export function DataTable<T>({
         loading={loading}
         error={error}
         emptyMessage={emptyMessage}
+        emptyContent={emptyContent}
+        footer={footer}
         selectable={selectable}
         localSelectedIds={localSelectedIds}
         getRowId={getRowId}
+        rowClassName={rowClassName}
+        classNames={classNames}
         onSelectAll={handleSelectAll}
         onSelect={handleSelect}
         sort={sort}
@@ -254,6 +275,7 @@ export function DataTable<T>({
       {pagination && pagination.total > 0 && (
         <DataTablePagination
           pagination={pagination}
+          className={classNames?.pagination}
           labels={labels}
         />
       )}
