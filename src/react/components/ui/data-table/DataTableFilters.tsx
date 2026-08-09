@@ -19,6 +19,8 @@ export interface DataTableFiltersProps {
   onFilterChange?: (key: string, value: any) => void;
   onClearFilters?: () => void;
   hasActiveFilters: boolean;
+  /** 필터 패널 컨테이너의 className — 기본 배경·여백을 호출부 디자인 규칙으로 덮을 때 */
+  className?: string;
   labels: {
     all: string;
     min: string;
@@ -34,9 +36,10 @@ export function DataTableFilters({
   onClearFilters,
   hasActiveFilters,
   labels,
+  className,
 }: DataTableFiltersProps) {
   return (
-    <div className="p-2 bg-muted/50 rounded-lg space-y-2">
+    <div className={cn("p-2 bg-muted/50 rounded-lg space-y-2", className)}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {filters.map(filter => (
           <div key={filter.key} className={cn("space-y-1", filter.className)}>

@@ -93,20 +93,26 @@ export interface BulkAction {
   disabled?: (selectedIds: string[]) => boolean;
 }
 
+/**
+ * 필터 입력 한 칸의 정의.
+ *
+ * DataTable 은 필터 값을 **읽어 표시할 뿐 데이터를 거르지 않는다** — 거르는 일은
+ * 호출부(서버 질의 또는 전달 전 배열 가공)의 몫이다. 페이지 총 건수·정렬이 표 밖에서
+ * 결정되므로 표가 임의로 행을 빼면 그 값들과 어긋난다.
+ *
+ * `range` 는 키 이름에 date/Date 가 들어가면 `{ start, end }`, 아니면 `{ min, max }`
+ * 형태로 값을 담는다.
+ */
 export interface FilterConfig {
   key: string;
   label: string;
-  type: 'text' | 'select' | 'date' | 'number' | 'switch' | 'range';
+  type: 'text' | 'select' | 'date' | 'number' | 'range';
   options?: { value: string; label: string }[];
   placeholder?: string;
   className?: string;
   inputType?: 'text' | 'number' | 'date';
   minPlaceholder?: string;
   maxPlaceholder?: string;
-  /** 필터 모드: 'server'(기본값)는 서버 사이드, 'client'는 클라이언트 사이드 필터링 */
-  filterMode?: 'server' | 'client';
-  /** 클라이언트 사이드 필터링 함수 (filterMode === 'client'일 때 사용) */
-  filterFn?: (item: any, value: any) => boolean;
 }
 
 export interface PaginationConfig {
@@ -154,10 +160,18 @@ export interface DataTableClassNames {
   cell?: string;
   /** tfoot */
   footer?: string;
-  /** 페이지네이션 바 */
+  /** 페이지네이션 바. 글자 크기를 주면 건수 안내·이동 버튼이 함께 따라온다 */
   pagination?: string;
-  /** 검색바가 없을 때 페이지 크기 선택기를 담는 툴바 */
+  /**
+   * 검색바가 **없을 때** 페이지 크기 선택기를 담는 툴바.
+   * onSearch·createButton 중 하나라도 있으면 그 자리를 검색 패널이 대신하므로
+   * 이 슬롯은 렌더되지 않는다 — 그때는 search 를 쓴다.
+   */
   toolbar?: string;
+  /** 검색 패널 컨테이너 (기본: p-3 bg-muted rounded-lg) */
+  search?: string;
+  /** 필터 패널 컨테이너 (기본: p-2 bg-muted/50 rounded-lg) */
+  filters?: string;
 }
 
 export interface DataTableProps<T> {
