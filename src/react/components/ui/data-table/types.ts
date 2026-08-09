@@ -61,7 +61,10 @@ export function formatLabel(template: string, values: Record<string, string | nu
 // 타입 정의
 export interface ColumnDef<T> {
   key: string;
-  header: string;
+  /** 헤더 내용. 노드를 넣으면 배지·아이콘도 헤더에 둘 수 있다 */
+  header: ReactNode;
+  /** th 의 title 속성 — 파생 값·산출 근거 같은 컬럼 주석용. header 가 노드일 때 특히 필요 */
+  headerTitle?: string;
   accessorKey?: keyof T;
   cell?: (item: T) => React.ReactNode;
   sortable?: boolean;
@@ -112,13 +115,49 @@ export interface PaginationConfig {
   total: number;
   pageSizeOptions?: number[];
   onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
+  /** 페이지 크기 변경 핸들러. 선택기를 숨기려면 pageSizeOptions 에 빈 배열을 준다 */
+  onPageSizeChange?: (pageSize: number) => void;
+  /**
+   * 페이지 번호별 실제 URL. 주면 페이지 이동 링크가 href 를 갖는다 —
+   * 새 탭 열기·가운데 클릭·JS 미로딩 상태에서도 동작한다.
+   * 보조 클릭(Ctrl/Cmd/Shift/가운데)은 브라우저 기본 동작에 맡기고,
+   * 일반 클릭만 onPageChange 로 가로챈다.
+   */
+  getPageHref?: (page: number) => string;
 }
 
 export interface SortConfig {
   sort: string;
   order: 'asc' | 'desc';
   onSortChange: (sort: string, order: 'asc' | 'desc') => void;
+}
+
+/**
+ * 표 각 부위의 className 슬롯. 모두 tailwind-merge 로 기본값과 병합되므로
+ * 같은 계열 유틸리티(bg-*, rounded-*, px-*)를 주면 기본값을 덮어쓴다.
+ * 예: 카드 테두리를 없애려면 wrapper: "border-0 rounded-none".
+ */
+export interface DataTableClassNames {
+  /** 표를 감싸는 테두리 박스 (기본: border rounded-lg overflow-hidden) */
+  wrapper?: string;
+  /** 가로 스크롤 컨테이너 */
+  scroller?: string;
+  /** table 요소 — 광폭 표의 min-w-[…] 를 여기에 준다 */
+  table?: string;
+  /** thead 의 tr (기본: border-b bg-muted/50) */
+  headerRow?: string;
+  /** 모든 th 공통 */
+  headerCell?: string;
+  /** 모든 tbody tr 공통. 행별 분기는 rowClassName 을 쓴다 */
+  row?: string;
+  /** 모든 td 공통 — 행 높이·글자 크기 보정용 */
+  cell?: string;
+  /** tfoot */
+  footer?: string;
+  /** 페이지네이션 바 */
+  pagination?: string;
+  /** 검색바가 없을 때 페이지 크기 선택기를 담는 툴바 */
+  toolbar?: string;
 }
 
 export interface DataTableProps<T> {
@@ -138,7 +177,18 @@ export interface DataTableProps<T> {
   selectedIds?: string[];
   getRowId: (item: T) => string;
   className?: string;
+  /** 부위별 className 슬롯 */
+  classNames?: DataTableClassNames;
+  /** 행별 추가 className — 변경 강조·비활성 행처럼 행 단위 상태 표현에 쓴다 */
+  rowClassName?: (item: T, index: number) => string | undefined;
+  /**
+   * tfoot 에 넣을 내용. 합계 행처럼 정렬·페이징 대상이 아닌 행을 여기 둔다.
+   * tr/td 를 직접 작성하며, 컬럼 수는 호출부가 맞춘다.
+   */
+  footer?: ReactNode;
   emptyMessage?: string;
+  /** 빈 상태 내용. 주면 emptyMessage 대신 이 노드를 렌더한다 */
+  emptyContent?: ReactNode;
   searchPlaceholder?: string;
   onSearch?: (search: string) => void;
   onSearchValueChange?: (searchValue: string) => void;

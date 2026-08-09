@@ -17,6 +17,7 @@
     "./react/components/ui/data-table/DataTableBody": "./dist/react/components/ui/data-table/DataTableBody.js",
     "./react/components/ui/data-table/DataTableBulkActions": "./dist/react/components/ui/data-table/DataTableBulkActions.js",
     "./react/components/ui/data-table/DataTableFilters": "./dist/react/components/ui/data-table/DataTableFilters.js",
+    "./react/components/ui/data-table/DataTablePageSize": "./dist/react/components/ui/data-table/DataTablePageSize.js",
     "./react/components/ui/data-table/DataTablePagination": "./dist/react/components/ui/data-table/DataTablePagination.js",
     "./react/components/ui/data-table/DataTableSearch": "./dist/react/components/ui/data-table/DataTableSearch.js",
     "./react/components/ui/data-table/types": "./dist/react/components/ui/data-table/types.js",

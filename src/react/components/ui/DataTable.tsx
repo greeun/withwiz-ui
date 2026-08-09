@@ -7,6 +7,7 @@
 export { DataTable } from "@withwiz/ui/react/components/ui/data-table";
 export type {
   DataTableLabels,
+  DataTableClassNames,
   ColumnDef,
   BulkAction,
   FilterConfig,
