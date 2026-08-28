@@ -7,6 +7,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { cn } from '@withwiz/ui/react/utils/client-utils';
 
 interface IDomainDisplayProps {
   className?: string;
@@ -50,7 +51,7 @@ export function DomainDisplay({
     : normalizedBase.replace(/\/$/, '');
   
   return (
-    <span className={`font-mono text-sm text-muted-foreground ${className}`}>
+    <span className={cn('font-mono text-sm text-muted-foreground', className)}>
       {displayDomain}
     </span>
   );
