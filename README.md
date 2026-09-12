@@ -34,7 +34,7 @@ Everything is imported per-file under `@withwiz/ui/react/*`:
 | DataTable | `react/components/ui/data-table` | `DataTable` + sub-components, `ColumnDef`/`BulkAction`/`FilterConfig`/… types, `DEFAULT_LABELS`, `formatLabel` |
 | Hooks | `react/hooks/*` | `useDataTable`, `useDebounce`, `useTimezone` (+`useSimpleTimezone`), `useExitIntent` — see [hooks/README.md](./src/react/hooks/README.md) |
 | Utils | `react/utils/client-utils` | `cn(...)` (clsx + tailwind-merge), `copyToClipboard(text)` |
-| Utils | `react/utils/qr-code` | `DEFAULT_QR_SETTINGS`, `QR_CODE_TEMPLATES`, `applyUserBrandToQRSettings`, `downloadQRCode`, `downloadQRCodeWithLogo`, `generateQRCodeUrl`, `loadQRSettings`, `saveQRSettings` |
+| Utils | `react/utils/qr-code` | `DEFAULT_QR_SETTINGS`, `QR_CODE_TEMPLATES`, `applyUserBrandToQRSettings`, `downloadQRCode`, `downloadQRCodeWithLogo`, `generateQRCodeUrl`, `isSafeLogoDataUrl`, `loadQRSettings`, `saveQRSettings` |
 | Error | `react/error` / `react/error/error-display` | `sonner`-based toasts: `showFriendlyError`, `handleApiResponse`, `formatInlineError`, `getErrorIcon`, `getDefaultErrorCode` + re-exports from `@withwiz/toolkit/core/error` |
 
 > Korean docs: [components/README.ko.md](./src/react/components/README.ko.md),

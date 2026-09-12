@@ -143,9 +143,20 @@ export const downloadQRCode = async (
 };
 
 // QR 코드 URL 생성 함수 (QR 추적 파라미터 포함)
+// shortCode 는 경로 세그먼트로 인코딩한다. 인코딩하지 않으면 '/'·'?'·'#' 이 섞인
+// 값이 경로 구조나 쿼리를 바꿔 버린다.
 export const generateQRCodeUrl = (shortCode: string, baseUrl: string): string => {
-  return `${baseUrl}/${shortCode}?src=qr`;
+  const base = baseUrl.replace(/\/+$/, '');
+  return `${base}/${encodeURIComponent(shortCode)}?src=qr`;
 };
+
+// 로고 데이터 URL 검증. 내려받은 SVG 파일에 그대로 박제되므로 인라인 이미지
+// data: URL 만 허용한다. 외부 http(s)·javascript: 등은 거부해 파일을 여는 쪽에서
+// 원격 리소스 요청이나 스크립트 실행이 일어나지 않게 한다.
+const LOGO_DATA_URL_PATTERN = /^data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+$/;
+
+export const isSafeLogoDataUrl = (value: string): boolean =>
+  LOGO_DATA_URL_PATTERN.test(value.trim());
 
 // 로고가 포함된 QR 코드 다운로드 함수
 export const downloadQRCodeWithLogo = async (
@@ -153,6 +164,10 @@ export const downloadQRCodeWithLogo = async (
   logoDataUrl: string,
   options: IQRCodeDownloadOptions
 ): Promise<void> => {
+  if (!isSafeLogoDataUrl(logoDataUrl)) {
+    throw new Error('logoDataUrl must be a base64-encoded data:image/* URL');
+  }
+
   const { format, filename = 'qrcode', quality = 1.0 } = options;
 
   if (format === 'svg') {
