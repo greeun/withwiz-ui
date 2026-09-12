@@ -1,6 +1,6 @@
 {
   "name": "@withwiz/ui",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "UI components for withwiz projects, namespaced by platform (@withwiz/ui/<platform>/*). React is the first supported platform.",
   "type": "module",
   "packageManager": "pnpm@11.9.0",
