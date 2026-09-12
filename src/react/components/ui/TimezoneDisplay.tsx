@@ -10,22 +10,25 @@ import { useSimpleTimezone } from '@withwiz/ui/react/hooks/useTimezone';
 import { Clock, Globe } from 'lucide-react';
 import { Badge } from '@withwiz/ui/react/components/ui/Badge';
 import { Skeleton } from '@withwiz/ui/react/components/ui/Skeleton';
+import { cn } from '@withwiz/ui/react/utils/client-utils';
 
 interface ITimezoneDisplayProps {
   showIcon?: boolean;
   showOffset?: boolean;
   variant?: 'default' | 'secondary' | 'outline';
   size?: 'sm' | 'md' | 'lg';
+  className?: string;
 }
 
 /**
  * 사용자 타임존을 표시하는 컴포넌트
  */
-export function TimezoneDisplay({ 
-  showIcon = true, 
-  showOffset = true, 
+export function TimezoneDisplay({
+  showIcon = true,
+  showOffset = true,
   variant = 'outline',
-  size = 'md'
+  size = 'md',
+  className
 }: ITimezoneDisplayProps) {
   const { timezone, offsetFormatted, isLoading, display } = useSimpleTimezone();
 
@@ -40,7 +43,7 @@ export function TimezoneDisplay({
   };
 
   return (
-    <Badge variant={variant} className={`${sizeClasses[size]} flex items-center gap-1.5`}>
+    <Badge variant={variant} className={cn(sizeClasses[size], 'flex items-center gap-1.5', className)}>
       {showIcon && <Globe className="h-3 w-3" />}
       <span className="font-medium">{timezone}</span>
       {showOffset && (
@@ -53,10 +56,11 @@ export function TimezoneDisplay({
 /**
  * 간단한 타임존 표시 (아이콘 없음)
  */
-export function SimpleTimezoneDisplay({ 
+export function SimpleTimezoneDisplay({
   showOffset = true,
   variant = 'secondary',
-  size = 'sm'
+  size = 'sm',
+  className
 }: Omit<ITimezoneDisplayProps, 'showIcon'>) {
   const { timezone, offsetFormatted, isLoading } = useSimpleTimezone();
 
@@ -71,7 +75,7 @@ export function SimpleTimezoneDisplay({
   };
 
   return (
-    <span className={`${sizeClasses[size]} text-muted-foreground`}>
+    <span className={cn(sizeClasses[size], 'text-muted-foreground', className)}>
       {timezone}
       {showOffset && ` (${offsetFormatted})`}
     </span>
