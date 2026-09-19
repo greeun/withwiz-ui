@@ -24,3 +24,7 @@ CLAUDE.md
 .env*
 !.env*.example
 !.env*.template
+
+# ast (agent session tracker) 로컬 산출물
+.ast/
+.ast*
