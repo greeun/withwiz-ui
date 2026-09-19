@@ -88,5 +88,16 @@
     "datatable",
     "withwiz"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greeun/withwiz-ui.git"
+  },
+  "homepage": "https://github.com/greeun/withwiz-ui#readme",
+  "bugs": {
+    "url": "https://github.com/greeun/withwiz-ui/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
