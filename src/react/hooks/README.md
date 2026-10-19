@@ -108,6 +108,20 @@ if (showPopup) return <Modal onClose={closePopup} onDismiss={dismissForever} />;
 - Triggers only after `delay`, respects cooldown via `${storageKey}-last-shown`, and
   permanent dismiss via `${storageKey}-dismissed`.
 
+### useMediaQuery
+Tracks whether a CSS media query matches and updates on change.
+
+```tsx
+import { useMediaQuery, useIsMobile } from '@withwiz/ui/react/hooks/useMediaQuery';
+
+const isWide = useMediaQuery('(min-width: 1280px)');
+const isMobile = useIsMobile();
+```
+- Signature: `useMediaQuery(query: string): boolean` (also the default export).
+- Breakpoint helpers: `useIsMobile()` (`max-width: 767px`), `useIsTablet()` (768–1023px),
+  `useIsDesktop()` (`min-width: 1024px`), `useIsMobileOrTablet()` (`max-width: 1023px`).
+- Returns `false` on the server and on the first client render, then the real value after mount.
+
 ## 📋 Checklist
 
 - [ ] React 18+ present (`react` peer dep)
