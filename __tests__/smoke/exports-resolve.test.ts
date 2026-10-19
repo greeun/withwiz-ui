@@ -6,6 +6,11 @@ const targets: Array<[string, string]> = [
   ['@withwiz/ui/react/components/ui/Select', 'Select'],
   ['@withwiz/ui/react/hooks/useDebounce', 'useDebounce'],
   ['@withwiz/ui/react/hooks/useTimezone', 'useTimezone'],
+  ['@withwiz/ui/react/hooks/useMediaQuery', 'useMediaQuery'],
+  ['@withwiz/ui/react/primitives/button', 'Button'],
+  ['@withwiz/ui/react/primitives/dialog', 'Dialog'],
+  ['@withwiz/ui/react/primitives/form', 'Form'],
+  ['@withwiz/ui/react/primitives/use-toast', 'useToast'],
   ['@withwiz/ui/react/utils/client-utils', 'cn'],
   ['@withwiz/ui/react/error', 'showFriendlyError'],
 ]
