@@ -6,5 +6,6 @@ ROOT="${1:?대상 디렉토리 필요}"
 grep -rl '@withwiz/toolkit/react' "$ROOT" \
   --include='*.ts' --include='*.tsx' --include='*.js' --include='*.jsx' \
   2>/dev/null | while read -r f; do
-  sed -i '' 's#@withwiz/toolkit/react#@withwiz/ui/react#g' "$f"
+  # BSD(macOS)·GNU(Linux) sed 모두 동작하도록 백업 확장자를 붙이고 지운다
+  sed -i.bak 's#@withwiz/toolkit/react#@withwiz/ui/react#g' "$f" && rm -f "$f.bak"
 done
