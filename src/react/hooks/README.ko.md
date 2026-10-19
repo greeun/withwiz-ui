@@ -108,6 +108,20 @@ if (showPopup) return <Modal onClose={closePopup} onDismiss={dismissForever} />;
 - `delay` 이후에만 발동, `${storageKey}-last-shown` 으로 쿨다운,
   `${storageKey}-dismissed` 로 영구 해제 적용.
 
+### useMediaQuery
+CSS 미디어 쿼리의 일치 여부를 추적하고, 바뀌면 다시 렌더합니다.
+
+```tsx
+import { useMediaQuery, useIsMobile } from '@withwiz/ui/react/hooks/useMediaQuery';
+
+const isWide = useMediaQuery('(min-width: 1280px)');
+const isMobile = useIsMobile();
+```
+- 시그니처: `useMediaQuery(query: string): boolean`(기본 export 도 같음).
+- 브레이크포인트 헬퍼: `useIsMobile()`(`max-width: 767px`), `useIsTablet()`(768–1023px),
+  `useIsDesktop()`(`min-width: 1024px`), `useIsMobileOrTablet()`(`max-width: 1023px`).
+- 서버와 클라이언트 첫 렌더에서는 `false` 를 반환하고, 마운트 후 실제 값으로 바뀝니다.
+
 ## 📋 체크리스트
 
 - [ ] React 18+ 확인 (`react` peer dep)
