@@ -11,6 +11,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { XIcon } from "lucide-react"
 
 import { cn } from "@withwiz/ui/react/utils/client-utils"
+import { useRestoreFocusOnClose } from "@withwiz/ui/react/utils/focus-restore"
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
 function Dialog({
@@ -57,10 +58,13 @@ function DialogContent({
   className,
   children,
   showCloseButton = true,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof DialogPrimitive.Content> & {
   showCloseButton?: boolean
 }) {
+  const focusRestore = useRestoreFocusOnClose({ onOpenAutoFocus, onCloseAutoFocus })
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
@@ -71,6 +75,7 @@ function DialogContent({
           className
         )}
         {...props}
+        {...focusRestore}
       >
         <VisuallyHidden asChild>
           <DialogPrimitive.Title>Dialog</DialogPrimitive.Title>
