@@ -11,6 +11,7 @@ import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
 
 import { cn } from "@withwiz/ui/react/utils/client-utils"
 import { buttonVariants } from "@withwiz/ui/react/primitives/button"
+import { useRestoreFocusOnClose } from "@withwiz/ui/react/utils/focus-restore"
 
 function AlertDialog({
   ...props
@@ -52,8 +53,11 @@ function AlertDialogOverlay({
 
 function AlertDialogContent({
   className,
+  onOpenAutoFocus,
+  onCloseAutoFocus,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
+  const focusRestore = useRestoreFocusOnClose({ onOpenAutoFocus, onCloseAutoFocus })
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
@@ -64,6 +68,7 @@ function AlertDialogContent({
           className
         )}
         {...props}
+        {...focusRestore}
       />
     </AlertDialogPortal>
   )
