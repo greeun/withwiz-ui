@@ -55,6 +55,16 @@ import { Label } from '@withwiz/ui/react/components/ui/Label';
 - `Input` extends `React.InputHTMLAttributes<HTMLInputElement>`
 - `Label` extends `React.LabelHTMLAttributes<HTMLLabelElement>`
 
+### Textarea
+```tsx
+import { Textarea } from '@withwiz/ui/react/components/ui/Textarea';
+
+<Label htmlFor="body">Body</Label>
+<Textarea id="body" name="body" rows={6} required />
+```
+- Extends `React.TextareaHTMLAttributes<HTMLTextAreaElement>`; renders a plain `<textarea>` with the same tokens as `Input`
+- Uses a minimum height (`min-h-20`) instead of a fixed one; override with `className`
+
 ### Select
 shadcn-style wrapper over `@radix-ui/react-select`. Compose from the exported parts:
 ```tsx
