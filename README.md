@@ -30,7 +30,7 @@ Everything is imported per-file under `@withwiz/ui/react/*`:
 
 | Area | Import root | Contents |
 |------|-------------|----------|
-| Components | `react/components/ui/*` | `Alert`, `Badge`, `Button`, `Input`, `Label`, `Select`, `Tooltip`, `Skeleton`, `Pagination`, `loading-bar`, `TimezoneDisplay`, `DomainDisplay`, `DataTable` — see [components/README.md](./src/react/components/README.md) |
+| Components | `react/components/ui/*` | `Alert`, `Badge`, `Button`, `Input`, `Textarea`, `Label`, `Select`, `Tooltip`, `Skeleton`, `Pagination`, `loading-bar`, `TimezoneDisplay`, `DomainDisplay`, `DataTable` — see [components/README.md](./src/react/components/README.md) |
 | Primitives | `react/primitives/*` | shadcn/ui-style Radix primitives: `accordion`, `alert`, `alert-dialog`, `badge`, `button`, `card`, `checkbox`, `dialog`, `dropdown-menu`, `form`, `input`, `label`, `progress`, `radio-group`, `scroll-area`, `select`, `separator`, `sheet`, `skeleton`, `sonner`, `switch`, `table`, `tabs`, `textarea`, `theme-provider`, `tooltip`, `use-toast` — see [primitives/README.md](./src/react/primitives/README.md) |
 | DataTable | `react/components/ui/data-table` | `DataTable` + sub-components, `ColumnDef`/`BulkAction`/`FilterConfig`/… types, `DEFAULT_LABELS`, `formatLabel` |
 | Hooks | `react/hooks/*` | `useDataTable`, `useDebounce`, `useTimezone` (+`useSimpleTimezone`), `useExitIntent`, `useMediaQuery` (+breakpoint helpers) — see [hooks/README.md](./src/react/hooks/README.md) |

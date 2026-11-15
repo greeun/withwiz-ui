@@ -54,6 +54,16 @@ import { Label } from '@withwiz/ui/react/components/ui/Label';
 - `Input` 은 `React.InputHTMLAttributes<HTMLInputElement>` 상속
 - `Label` 은 `React.LabelHTMLAttributes<HTMLLabelElement>` 상속
 
+### Textarea
+```tsx
+import { Textarea } from '@withwiz/ui/react/components/ui/Textarea';
+
+<Label htmlFor="body">본문</Label>
+<Textarea id="body" name="body" rows={6} required />
+```
+- `React.TextareaHTMLAttributes<HTMLTextAreaElement>` 상속. `Input` 과 같은 토큰으로 기본 `<textarea>` 를 렌더
+- 고정 높이 대신 최소 높이(`min-h-20`)를 쓰며 `className` 으로 덮어쓸 수 있음
+
 ### Select
 `@radix-ui/react-select` 위의 shadcn 스타일 래퍼. export된 파트로 조립합니다.
 ```tsx

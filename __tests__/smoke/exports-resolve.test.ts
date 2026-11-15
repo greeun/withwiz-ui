@@ -4,6 +4,7 @@ const targets: Array<[string, string]> = [
   ['@withwiz/ui/react/components/ui/data-table', 'DataTable'],
   ['@withwiz/ui/react/components/ui/Button', 'Button'],
   ['@withwiz/ui/react/components/ui/Select', 'Select'],
+  ['@withwiz/ui/react/components/ui/Textarea', 'Textarea'],
   ['@withwiz/ui/react/hooks/useDebounce', 'useDebounce'],
   ['@withwiz/ui/react/hooks/useTimezone', 'useTimezone'],
   ['@withwiz/ui/react/hooks/useMediaQuery', 'useMediaQuery'],
